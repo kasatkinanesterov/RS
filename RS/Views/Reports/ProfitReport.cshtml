@@ -1,0 +1,47 @@
+﻿@model RS.Models.ProfitReportViewModel
+
+<h2>Отчёт о прибыли</h2>
+
+<h3>Прибыль по товарам</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Прибыль</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.ProductProfits)
+        {
+            <tr>
+                <td>@product.ProductName</td>
+                <td>@product.TotalQuantity</td>
+                <td>@product.TotalProfit</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Прибыль по услугам</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Услуга</th>
+            <th>Количество</th>
+            <th>Прибыль</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var service in Model.ServiceProfits)
+        {
+            <tr>
+                <td>@service.ServiceName</td>
+                <td>@service.TotalUsage</td>
+                <td>@service.TotalProfit</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Общая прибыль: @Model.TotalProfit</h3>

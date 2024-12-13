@@ -1,0 +1,87 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Order</h1>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="EmployeeId" class="control-label"></label>
+        <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CustomerName" class="control-label"></label>
+        <input asp-for="CustomerName" class="form-control" />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="OrderStatus" class="control-label"></label>
+        <input asp-for="OrderStatus" class="form-control" />
+        <span asp-validation-for="OrderStatus" class="text-danger"></span>
+    </div>
+
+    <h4>Order Products</h4>
+    <table id="order-products-table" class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Additional Info</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.OrderProducts.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <select asp-for="OrderProducts[@i].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                        <span asp-validation-for="OrderProducts[@i].ProductId" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input asp-for="OrderProducts[@i].Quantity" class="form-control" />
+                        <span asp-validation-for="OrderProducts[@i].Quantity" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input asp-for="OrderProducts[@i].AdditionalInfo" class="form-control" />
+                        <span asp-validation-for="OrderProducts[@i].AdditionalInfo" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="removeProductRow(this)">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-success" onclick="addProductRow()">Add Product</button>
+
+    <div class="form-group mt-3">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function addProductRow() {
+            const table = document.getElementById('order-products-table').getElementsByTagName('tbody')[0];
+            const rowCount = table.rows.length;
+            const newRow = table.insertRow(rowCount);
+            newRow.innerHTML = `
+                        <td><select name="OrderProducts[${rowCount}].ProductId" class="form-control">@Html.Raw(Json.Serialize(ViewBag.ProductId))</select></td>
+                        <td><input name="OrderProducts[${rowCount}].Quantity" class="form-control" /></td>
+                        <td><input name="OrderProducts[${rowCount}].AdditionalInfo" class="form-control" /></td>
+                        <td><button type="button" class="btn btn-danger" onclick="removeProductRow(this)">Remove</button></td>
+                    `;
+        }
+
+        function removeProductRow(button) {
+            const row = button.closest('tr');
+            row.parentNode.removeChild(row);
+        }
+    </script>
+}

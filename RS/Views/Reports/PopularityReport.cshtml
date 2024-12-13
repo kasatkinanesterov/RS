@@ -1,0 +1,41 @@
+﻿@model RS.Models.PopularityReportViewModel
+
+<h2>Отчёт о востребованности товаров и услуг</h2>
+
+<h3>Товары</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.ProductPopularity)
+        {
+            <tr>
+                <td>@product.ProductName</td>
+                <td>@product.TotalQuantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Услуги</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Услуга</th>
+            <th>Количество использований</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var service in Model.ServicePopularity)
+        {
+            <tr>
+                <td>@service.ServiceName</td>
+                <td>@service.TotalUsage</td>
+            </tr>
+        }
+    </tbody>
+</table>
