@@ -1,0 +1,135 @@
+﻿@model IEnumerable<RS.ViewModels.Services.ServiceViewModel>
+
+@{
+    ViewData["Title"] = "Список услуг";
+    var isAdmin = User.IsInRole("Admin"); // Проверяем, является ли пользователь администратором
+}
+
+<h1>Список услуг</h1>
+
+<div class="mb-3">
+    @if (isAdmin)
+    {
+        <button class="btn btn-success" id="createServiceBtn" data-url="@Url.Action("Create", "Services")">
+            Создать услугу
+        </button>
+    }
+</div>
+
+<table id="servicesTable" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Описание</th>
+            <th>Роль</th>
+            <th>Активна</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var service in Model)
+        {
+            <tr>
+                <td>@service.Name</td>
+                <td>@service.Price.ToString("C")</td>
+                <td>@service.Description</td>
+                <td>@service.RoleName</td>
+                <td>@(service.IsActive ? "Да" : "Нет")</td>
+                <td>
+                    <button class="btn btn-info btn-sm details-service" data-url="@Url.Action("Details", "Services", new { id = service.Id })">Подробнее</button>
+                    @if (isAdmin)
+                    {
+                        <button class="btn btn-primary btn-sm edit-service" data-url="@Url.Action("Edit", "Services", new { id = service.Id })">Изменить</button>
+                        <button class="btn btn-danger btn-sm delete-service" data-url="@Url.Action("ConfirmDelete", "Services", new { id = service.Id })">Удалить</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Модальное окно -->
+<div id="serviceModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Содержимое модального окна будет подгружено сюда -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function ($) {
+            $(document).ready(function () {
+                // Открытие модального окна для создания услуги
+                $("#createServiceBtn").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Создать услугу");
+                });
+
+                // Открытие модального окна для "Подробнее"
+                $(".details-service").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Детали услуги");
+                });
+
+                // Открытие модального окна для "Изменить"
+                $(".edit-service").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Изменение услуги");
+                });
+
+                // Открытие модального окна для "Удалить"
+                $(".delete-service").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Удаление услуги");
+                });
+
+                // Функция загрузки частичного представления в модальное окно
+                function loadPartialView(url, title) {
+                    $.get(url, function (data) {
+                        $("#serviceModal .modal-body").html(data);
+                        $("#serviceModal .modal-title").text(title);
+                        $("#serviceModal").modal("show");
+                    }).fail(function () {
+                        alert("Ошибка при загрузке данных.");
+                    });
+                }
+
+                // Обработка отправки формы через AJAX
+                    $(document).on("submit", "form", function (e) {
+                            e.preventDefault();
+                            const form = $(this);
+                            const url = form.attr("action");
+                            const data = new FormData(form[0]);
+
+                            $.ajax({
+                                url: url,
+                                type: "POST",
+                                data: data,
+                                contentType: false,
+                                processData: false,
+                                success: function (response) {
+                                    if (response.success) {
+                                        $("#serviceModal").modal("hide");
+                                        location.reload(); // Перезагрузка страницы
+                                    } else {
+                                        $("#serviceModal .modal-body").html(response); // Обновление модального окна с ошибками
+                                    }
+                                },
+                                error: function () {
+                                    alert("Ошибка при обработке запроса.");
+                                }
+                            });
+                        });
+                    });
+                })(jQuery);
+    </script>
+}

@@ -1,0 +1,15 @@
+﻿@model RS.ViewModels.OrderProducts.SelectProductViewModel
+
+<form id="selectProductForm" method="post" asp-action="SelectProduct" asp-controller="OrderProducts">
+    <h6>Выбрать товар в заказе</h6>
+    <input type="hidden" asp-for="OrderId" />
+    <div class="form-group">
+        <label for="ProductId">Товар</label>
+        <select asp-for="ProductId" asp-items="ViewBag.Products" class="form-control">
+            <option value="">-- Выберите товар --</option>
+        </select>
+        <span asp-validation-for="ProductId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Далее</button>
+</form>

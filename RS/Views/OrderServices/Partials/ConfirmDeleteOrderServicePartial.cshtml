@@ -1,0 +1,20 @@
+﻿@model RS.ViewModels.OrderServices.OrderServiceViewModel
+
+<div>
+    <h5>Вы действительно хотите удалить услугу из заказа?</h5>
+    <hr />
+    <p><strong>Название услуги:</strong> @Model.ServiceName</p>
+    <p><strong>Цена:</strong> @Model.ServicePrice.ToString("C")</p>
+    <p><strong>Статус:</strong> @Model.Status</p>
+    <p><strong>Исполнитель:</strong> @Model.ExecutorName</p>
+    <p><strong>Дата создания:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+    <p><strong>Дата обновления:</strong> @Model.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+    <p><strong>Срок выполнения:</strong> @Model.Deadline.ToString("dd.MM.yyyy HH:mm")</p>
+    <p><strong>Дополнительная информация:</strong> @Model.AdditionalInfo</p>
+
+    <form id="deleteOrderServiceForm" method="post" asp-action="DeleteOrderService" asp-controller="OrderServices">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+    </form>
+</div>

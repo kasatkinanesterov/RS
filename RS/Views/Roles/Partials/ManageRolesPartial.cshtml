@@ -1,0 +1,19 @@
+﻿@model RS.ViewModels.Identity.ManageRolesViewModel
+
+<form id="manageRolesForm" asp-action="ManageRoles" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <div class="mb-3">
+        <label><strong>Имя пользователя:</strong></label>
+        <p>@Model.UserName</p>
+    </div>
+
+    <div class="mb-3">
+        <label for="SelectedRoles"><strong>Роли:</strong></label>
+        <select asp-for="SelectedRoles" class="form-control" asp-items="@(new MultiSelectList(Model.AvailableRoles))" multiple>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</form>

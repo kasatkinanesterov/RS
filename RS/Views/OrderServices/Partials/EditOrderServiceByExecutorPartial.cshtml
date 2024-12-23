@@ -1,0 +1,20 @@
+﻿@model RS.ViewModels.OrderServices.OrderServiceExecutorEditViewModel
+
+<form id="editOrderServiceByExecutorForm" method="post" asp-action="EditOrderServiceByExecutor" asp-controller="OrderServices">
+    <h6>Редактировать услугу (исполнитель)</h6>
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label for="Status">Статус</label>
+        <select asp-for="Status" class="form-control" asp-items="@(new SelectList(RS.ViewModels.OrderServices.OrderServiceExecutorEditViewModel.AvailableStatuses))"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="AdditionalInfo">Дополнительная информация</label>
+        <textarea asp-for="AdditionalInfo" class="form-control"></textarea>
+        <span asp-validation-for="AdditionalInfo" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+</form>

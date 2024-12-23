@@ -1,0 +1,43 @@
+﻿@model IEnumerable<RS.Models.Order>
+
+@{
+    ViewData["Title"] = "Список заказов";
+    var userRole = ViewBag.UserRole as string; // Получаем роль пользователя из ViewBag
+}
+
+<h1>Список заказов</h1>
+@if (userRole == "Admin" || userRole == "Agent")
+{
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-success">Создать заказ</a>
+    </div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Имя клиента</th>
+            <th>Email клиента</th>
+            <th>Телефон клиента</th>
+            <th>Статус заказа</th>
+            <th>Ответственный</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CustomerName</td>
+                <td>@item.CustomerEmail</td>
+                <td>@item.CustomerPhone</td>
+                <td>@item.OrderStatus</td>
+                <td>@(item.Employee?.UserName ?? "Не назначен")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

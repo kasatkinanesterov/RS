@@ -1,0 +1,133 @@
+﻿@model IEnumerable<RS.ViewModels.Products.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Список товаров";
+    var isAdmin = User.IsInRole("Admin"); // Проверяем, является ли пользователь администратором
+}
+
+<h1>Список товаров</h1>
+
+<div class="mb-3">
+    @if (isAdmin)
+    {
+        <button class="btn btn-success" id="createProductBtn" data-url="@Url.Action("Create", "Products")">
+            Создать товар
+        </button>
+    }
+</div>
+
+<table id="productsTable" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Описание</th>
+            <th>Роль</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Description</td>
+                <td>@item.RoleName</td>
+                <td>
+                    <button class="btn btn-info btn-sm details-product" data-url="@Url.Action("Details", "Products", new { id = item.Id })">Подробнее</button>
+                    @if (isAdmin)
+                    {
+                        <button class="btn btn-primary btn-sm edit-product" data-url="@Url.Action("Edit", "Products", new { id = item.Id })">Изменить</button>
+                        <button class="btn btn-danger btn-sm delete-product" data-url="@Url.Action("ConfirmDelete", "Products", new { id = item.Id })">Удалить</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Модальное окно -->
+<div id="productModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Содержимое модального окна будет подгружено сюда -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function ($) {
+            $(document).ready(function () {
+                // Открытие модального окна для создания товара
+                $("#createProductBtn").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Создать товар");
+                });
+
+                // Открытие модального окна для "Подробнее"
+                $(".details-product").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Детали товара");
+                });
+
+                // Открытие модального окна для "Изменить"
+                $(".edit-product").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Изменение товара");
+                });
+
+                // Открытие модального окна для "Удалить"
+                $(".delete-product").click(function () {
+                    const url = $(this).data("url");
+                    loadPartialView(url, "Удаление товара");
+                });
+
+                // Функция загрузки частичного представления в модальное окно
+                function loadPartialView(url, title) {
+                    $.get(url, function (data) {
+                        $("#productModal .modal-body").html(data);
+                        $("#productModal .modal-title").text(title);
+                        $("#productModal").modal("show");
+                    }).fail(function () {
+                        alert("Ошибка при загрузке данных.");
+                    });
+                }
+
+                // Обработка отправки формы через AJAX
+                $(document).on("submit", "form", function (e) {
+                    e.preventDefault();
+                    const form = $(this);
+                    const url = form.attr("action");
+                    const data = new FormData(form[0]);
+
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: data,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#productModal").modal("hide");
+                                location.reload(); // Перезагрузка страницы
+                            } else {
+                                $("#productModal .modal-body").html(response); // Обновление модального окна с ошибками
+                            }
+                        },
+                        error: function () {
+                            alert("Ошибка при обработке запроса.");
+                        }
+                    });
+                });
+            });
+        })(jQuery);
+    </script>
+}

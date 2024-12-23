@@ -1,0 +1,402 @@
+﻿@model RS.ViewModels.Orders.OrderDetailsViewModel
+
+@{
+    ViewData["Title"] = "Детали заказа";
+}
+
+<h1>Детали заказа</h1>
+
+<div>
+    <h3>Информация о заказе</h3>
+    <p><strong>Номер заказа:</strong> @Model.OrderId</p>
+    <p><strong>Имя клиента:</strong> @Model.CustomerName</p>
+    <p><strong>Email клиента:</strong> @Model.CustomerEmail</p>
+    <p><strong>Телефон клиента:</strong> @Model.CustomerPhone</p>
+    <p><strong>Статус заказа:</strong> @Model.OrderStatus</p>
+    <p><strong>Ответственный сотрудник:</strong> @Model.EmployeeName</p>
+    <p><strong>Создан:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+    <p><strong>Обновлён:</strong> @Model.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+</div>
+
+<!-- Кнопки редактирования -->
+<div>
+    @if (ViewBag.CanEditAsAdmin)
+    {
+        <a href="javascript:void(0)" class="btn btn-primary" id="editOrderAdminBtn" data-url="@Url.Action("EditOrderByAdmin", "Orders", new { id = Model.OrderId })">Редактировать (Admin)</a>
+        <a href="javascript:void(0)" class="btn btn-danger" id="deleteOrderBtn" data-url="@Url.Action("ConfirmDeleteOrder", "Orders", new { id = Model.OrderId })">Удалить заказ</a>
+
+    }
+
+    @if (ViewBag.CanEditAsAgent)
+    {
+        <a href="javascript:void(0)" class="btn btn-primary" id="editOrderAgentBtn" data-url="@Url.Action("EditOrderByAgent", "Orders", new { id = Model.OrderId })">Редактировать (Agent)</a>
+    }
+</div>
+<hr>
+<div>
+    <!-- Кнопки для управления товарами в заказе -->
+    <h3>Управление товарами</h3>
+    @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent)
+    {
+        <button class="btn btn-sm btn-success" id="addOrderProductBtn" data-url="@Url.Action("SelectProduct", "OrderProducts", new { orderId = Model.OrderId })">Добавить товар</button>
+
+    }
+
+</div>
+<div>
+    <h3>Товары в заказе</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Статус</th>
+                <th>Исполнитель</th>
+                <th>Дополнительная информация</th>
+                <th>Дата создания</th>
+                <th>Дата обновления</th>
+                <th>Срок выполнения</th>
+                @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent || ViewBag.CurrentUserId != null)
+                {
+                    <th>Действия</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.ProductName</td>
+                    <td>@product.ProductPrice.ToString("C")</td>
+                    <td>@product.Status</td>
+                    <td>@(product.ExecutorName ?? "Не назначен")</td>
+                    <td>@product.AdditionalInfo</td>
+                    <td>@product.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@product.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@product.Deadline.ToString("dd.MM.yyyy HH:mm")</td>
+                    @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent || product.ExecutorId == ViewBag.CurrentUserId)
+                    {
+                        <td>
+                            @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent)
+                            {
+                                <!-- Кнопка редактирования -->
+                                <button class="btn btn-sm btn-primary edit-order-product-btn"
+                                        data-url="@Url.Action("EditOrderProduct", "OrderProducts", new { id = product.Id })">
+                                    Редактировать
+                                </button>
+                            }
+                            @if (ViewBag.CanEditAsAdmin)
+                            {
+                                <!-- Кнопка удаления -->
+                                <button class="btn btn-sm btn-danger delete-order-product-btn"
+                                        data-url="@Url.Action("ConfirmDeleteOrderProduct", "OrderProducts", new { id = product.Id })">
+                                    Удалить
+                                </button>
+                            }
+                            @if (product.ExecutorId == ViewBag.CurrentUserId)
+                            {
+                                <!-- Кнопка редактирования для исполнителя -->
+                                <button class="btn btn-sm btn-danger edit-executor-order-product-btn"
+                                        data-url="@Url.Action("EditOrderProductByExecutor", "OrderProducts", new { id = product.Id })">
+                                    Редактировать (исполнитель)
+                                </button>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+
+<div>
+    <!-- Кнопки для управления услугами в заказе -->
+    <h3>Управление услугами</h3>
+    @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent)
+    {
+        <button class="btn btn-sm btn-success" id="addOrderServiceBtn" data-url="@Url.Action("SelectService", "OrderServices", new { orderId = Model.OrderId })">
+            Добавить услугу
+        </button>
+    }
+
+</div>
+
+<div>
+    <h3>Услуги в заказе</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Статус</th>
+                <th>Исполнитель</th>
+                <th>Дополнительная информация</th>
+                <th>Дата создания</th>
+                <th>Дата обновления</th>
+                <th>Срок выполнения</th>
+                @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent)
+                {
+                    <th>Действия</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var service in Model.Services)
+            {
+                <tr>
+                    <td>@service.ServiceName</td>
+                    <td>@service.ServicePrice.ToString("C")</td>
+                    <td>@service.Status</td>
+                    <td>@(service.ExecutorName ?? "Не назначен")</td>
+                    <td>@service.AdditionalInfo</td>
+                    <td>@service.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@service.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@service.Deadline.ToString("dd.MM.yyyy HH:mm")</td>
+                    @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent || service.ExecutorId == ViewBag.CurrentUserId)
+                    {
+                        <td>
+                            <!-- Кнопка Details -->
+                          
+                            @if (ViewBag.CanEditAsAdmin || ViewBag.CanEditAsAgent)
+                            {
+                                <!-- Кнопка редактирования -->
+                                <button class="btn btn-sm btn-primary edit-order-product-btn"
+                                        data-url="@Url.Action("EditOrderService", "OrderServices", new { id = service.Id })">
+                                    Редактировать
+                                </button>
+                            }
+                            @if (ViewBag.CanEditAsAdmin)
+                            {
+                                <!-- Кнопка удаления -->
+                                <button class="btn btn-sm btn-danger delete-order-product-btn"
+                                        data-url="@Url.Action("ConfirmDeleteOrderService", "OrderServices", new { id = service.Id })">
+                                    Удалить
+                                </button>
+                            }
+                            @if (service.ExecutorId == ViewBag.CurrentUserId)
+                            {
+                                <!-- Кнопка редактирования для исполнителя -->
+                                <button class="btn btn-sm btn-danger edit-executor-order-product-btn"
+                                        data-url="@Url.Action("EditOrderServiceByExecutor", "OrderServices", new { id = service.Id })">
+                                    Редактировать (исполнитель)
+                                </button>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Модальное окно -->
+<div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Редактировать заказ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Здесь будет подгружено частичное представление -->
+                <div id="editModalBody"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // Открытие модального окна для подтверждения удаления
+            $(document).on('click', '#deleteOrderBtn', function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function () {
+                    alert('Ошибка при загрузке формы подтверждения удаления.');
+                });
+            });
+            // Загрузка формы для Admin
+            $('#editOrderAdminBtn').click(function () {
+                var url = $(this).data('url');
+                loadModalForm(url);
+            });
+
+            // Загрузка формы для Agent
+            $('#editOrderAgentBtn').click(function () {
+                var url = $(this).data('url');
+                loadModalForm(url);
+            });
+
+            // Загрузка формы добавления товара
+            $('#addOrderProductBtn').click(function () {
+                var url = $(this).data('url');
+                loadModalForm(url);
+            });
+
+            // Загрузка формы добавления услуги
+            $('#addOrderServiceBtn').click(function () {
+                var url = $(this).data('url');
+                loadModalForm(url);
+            });
+
+            // Редактирование товара
+            $(document).on('click', '.edit-order-product-btn', function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function () {
+                    alert('Ошибка при загрузке формы.');
+                });
+            });
+
+            // Редактирование товара исполнителем
+            $(document).on('click', '.edit-executor-order-product-btn', function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function (error) {
+                    alert('Ошибка при загрузке формы для исполнителя.');
+                    console.error("Error:", error);
+                });
+            });
+
+            // Редактирование услуги
+            $(document).on('click', '.edit-service-btn', function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function () {
+                    alert('Ошибка при загрузке формы.');
+                });
+            });
+
+            // Удаление товара
+            $(document).on('click', '.delete-order-product-btn', function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function () {
+                    alert('Ошибка при загрузке формы подтверждения удаления.');
+                });
+            });
+
+            $(document).on('submit', '#deleteOrderProductForm', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var data = form.serialize();
+
+                $.post(url, data, function (response) {
+                    if (response.success) {
+                        $('#editModal').modal('hide'); // Закрываем модальное окно
+                        location.reload(); // Обновляем страницу
+                    } else {
+                        alert(response.message);
+                    }
+                }).fail(function (error) {
+                    alert('Ошибка при удалении товара.');
+                    console.error("Error:", error);
+                });
+            });
+
+
+            // Удаление услуги
+            $(document).on('click', '.delete-service-btn', function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function () {
+                    alert('Ошибка при загрузке формы подтверждения удаления.');
+                });
+            });
+
+            $(document).on('submit', '#deleteOrderServiceForm', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var data = form.serialize();
+
+                $.post(url, data, function (response) {
+                    if (response.success) {
+                        $('#editModal').modal('hide'); // Закрываем модальное окно
+                        location.reload(); // Обновляем страницу
+                    } else {
+                        alert(response.message);
+                    }
+                }).fail(function (error) {
+                    alert('Ошибка при удалении услуги.');
+                    console.error("Error:", error);
+                });
+            });
+
+            $(document).on('submit', '#deleteOrderForm', function (e) {
+    e.preventDefault(); // Предотвращаем стандартное поведение формы
+    var form = $(this);
+    var url = form.attr('action'); // Получаем URL из атрибута action формы
+    var data = form.serialize(); // Собираем данные формы
+
+    $.post(url, data, function (response) {
+        if (response.success) {
+            $('#editModal').modal('hide'); // Закрываем модальное окно
+            window.location.href = "/Orders/Index"; // Редирект на список заказов
+        } else {
+            alert(response.message || "Ошибка при удалении заказа.");
+        }
+    }).fail(function (error) {
+        alert('Ошибка при выполнении запроса.');
+        console.error("Error:", error);
+    });
+});
+
+
+            // Обработка отправки форм через AJAX
+            $(document).on('submit', '#editOrderByAdminForm, #editOrderByAgentForm,  #editOrderProductForm, #editOrderServiceForm, #editOrderProductByExecutorForm, #editOrderServiceByExecutorForm, #selectProductForm, #addOrderProductDetailsForm, #selectServiceForm, #addOrderServiceDetailsForm', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var data = form.serialize();
+
+                $.post(url, data, function (response) {
+                    if (response.success) {
+                        $('#editModal').modal('hide'); // Закрываем модальное окно
+                        location.reload(); // Обновляем данные на странице
+                    } else {
+                        $('#editModalBody').html(response); // Перезагружаем частичное представление с ошибками
+                    }
+                }).fail(function (error) {
+                    alert('Ошибка при обработке запроса.');
+                    console.error("Error:", error);
+                });
+            });
+
+            // Функция для загрузки форм (Add/Edit)
+            function loadModalForm(url) {
+                $.get(url, function (data) {
+                    $('#editModalBody').html(data);
+                    $('#editModal').modal('show');
+                }).fail(function (error) {
+                    alert('Ошибка при загрузке формы.');
+                    console.error("Error:", error);
+                });
+            }
+        });
+    </script>
+}
+
+
+
+}

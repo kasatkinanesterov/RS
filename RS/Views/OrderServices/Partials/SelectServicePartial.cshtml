@@ -1,0 +1,16 @@
+﻿@model RS.ViewModels.OrderServices.SelectServiceViewModel
+
+<form id="selectServiceForm" method="post" asp-action="SelectService" asp-controller="OrderServices">
+    <h6>Выбрать услугу в заказе</h6>
+    <input type="hidden" asp-for="OrderId" />
+
+    <div class="form-group">
+        <label for="ServiceId">Услуга</label>
+        <select asp-for="ServiceId" asp-items="ViewBag.Services" class="form-control">
+            <option value="">-- Выберите услугу --</option>
+        </select>
+        <span asp-validation-for="ServiceId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Далее</button>
+</form>

@@ -1,0 +1,14 @@
+﻿@model RS.ViewModels.Products.ProductViewModel
+
+<div>
+    <h4>Вы уверены, что хотите удалить этот товар?</h4>
+    <p><strong>Название:</strong> @Model.Name</p>
+    <p><strong>Цена:</strong> @Model.Price</p>
+    <p><strong>Описание:</strong> @Model.Description</p>
+    <p><strong>Роль:</strong> @Model.RoleName</p>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+    </form>
+</div>

@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using Microsoft.AspNetCore.Identity
+@using RS.Models
+@inject UserManager<IdentityUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+
+<div class="text-center">
+    <h1 class="display-4">Панель управления</h1>
+    <p>Crud, функции, роли</p>
+</div>
+<a asp-controller="Roles" asp-action="Index" class="btn btn-primary">Управление ролями</a>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Сущность</th>
+            <th>Просмотр всех</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Заказы</td>
+            <td><a href="/Orders">Просмотр</a></td>
+        </tr>
+        <tr>
+            <td>Товары</td>
+            <td><a href="/Products">Просмотр</a></td>
+        </tr>
+        <tr>
+            <td>Услуги</td>
+            <td><a href="/Services">Просмотр</a></td>
+        </tr>
+    </tbody>
+</table>
+
+@if (User.Identity.IsAuthenticated)
+{
+    var userId = UserManager.GetUserId(User); // ID пользователя
+    var roles = await UserManager.GetRolesAsync(await UserManager.GetUserAsync(User)); // Роли пользователя
+
+    <p>Ваш ID: @userId</p>
+    <p>Ваши роли: @string.Join(", ", roles)</p>
+}
+else
+{
+    <p>Вы не авторизованы.</p>
+}
+
+<div class="text-center">
+    <h1 class="display-4">Система отчетов!</h1>
+    <p>Вы можете посмотреть доступные отчеты ниже:</p>
+
+    <a class="btn btn-primary" href="@ViewData["ReportLink"]">Посмотреть отчет по заказам</a>
+    <br>
+    <a class="btn btn-secondary" asp-controller="Reports" asp-action="ProfitReport">Посмотреть отчет о прибыли</a>
+    <br>
+    <a class="btn btn-secondary" asp-controller="Reports" asp-action="PopularityReport">Посмотреть востребованность товаров и услуг</a>
+</div>

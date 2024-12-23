@@ -1,0 +1,58 @@
+﻿@model RS.ViewModels.Products.EditProductViewModel
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ExistingPhoto" /> <!-- Скрытое поле для текущего фото -->
+
+    <div class="form-group">
+        <label for="Name">Название</label>
+        <input type="text" value="@ViewBag.ProductName" class="form-control" readonly /> <!-- Только для отображения -->
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Цена</label>
+        <input type="number" asp-for="Price" class="form-control" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Описание</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Photo">Фото</label>
+        <input type="file" id="PhotoInput" class="form-control" name="PhotoFile" />
+        <img id="PreviewImage" src="@Model.ExistingPhoto" alt="Текущее фото"
+             style="max-width: 100%; margin-top: 10px; display: @(string.IsNullOrEmpty(Model.ExistingPhoto) ? "none" : "block");" />
+    </div>
+
+    <div class="form-group">
+        <label for="RoleId">Роль</label>
+        <select class="form-control" disabled>
+            <option selected>@ViewBag.RoleName</option>
+        </select>
+        <input type="hidden" asp-for="RoleId" /> <!-- Скрытое поле для отправки значения -->
+    </div>
+
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</form>
+
+<script>
+    (function ($) {
+        $("#PhotoInput").change(function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#PreviewImage").attr("src", e.target.result).show(); // Обновляем предпросмотр
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    })(jQuery);
+</script>

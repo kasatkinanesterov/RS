@@ -1,0 +1,18 @@
+﻿@model RS.ViewModels.Orders.ConfirmDeleteOrderViewModel
+
+<div>
+    <p>Вы уверены, что хотите удалить заказ?</p>
+    <p><strong>Номер заказа:</strong> @Model.OrderId</p>
+    <p><strong>Имя клиента:</strong> @Model.CustomerName</p>
+    <p><strong>Email клиента:</strong> @Model.CustomerEmail</p> <!-- Добавлено -->
+    <p><strong>Статус заказа:</strong> @Model.OrderStatus</p>
+</div>
+
+<form id="deleteOrderForm" method="post" asp-action="DeleteOrderByAdmin">
+    <input type="hidden" name="OrderId" value="@Model.OrderId" />
+    @Html.AntiForgeryToken()
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+    </div>
+</form>

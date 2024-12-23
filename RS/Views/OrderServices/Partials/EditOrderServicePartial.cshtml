@@ -1,0 +1,35 @@
+﻿@model RS.ViewModels.OrderServices.OrderServiceEditViewModel
+
+<form id="editOrderServiceForm" method="post" asp-action="EditOrderService" asp-controller="OrderServices">
+    <h6>Редактировать услугу в заказе</h6>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="OrderId" />
+
+    <div class="form-group">
+        <label for="ServiceName">Название услуги</label>
+        <input type="text" class="form-control" id="ServiceName" value="@ViewBag.ServiceName" readonly />
+    </div>
+
+    <div class="form-group">
+        <label for="ExecutorId">Исполнитель</label>
+        <select asp-for="ExecutorId" asp-items="ViewBag.Executors" class="form-control"></select>
+    </div>
+
+    <div class="form-group">
+        <label for="Status">Статус</label>
+        <select asp-for="Status" class="form-control" asp-items="@(new SelectList(RS.ViewModels.OrderServices.OrderServiceEditViewModel.AvailableStatuses))"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="AdditionalInfo"></label>
+        <textarea asp-for="AdditionalInfo" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Deadline"></label>
+        <input asp-for="Deadline" type="datetime-local" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>

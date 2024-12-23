@@ -1,0 +1,87 @@
+﻿@model IEnumerable<RS.ViewModels.Identity.UserRolesViewModel>
+
+@{
+    ViewData["Title"] = "Управление ролями";
+}
+
+<h1>Управление ролями</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Имя пользователя</th>
+            <th>Роли</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@string.Join(", ", user.Roles)</td>
+                <td>
+                    <button class="btn btn-sm btn-primary manage-roles-btn"
+                            data-url="@Url.Action("ManageRoles", "Roles", new { userId = user.UserId })"
+                            data-title="Управление ролями для @user.UserName">
+                        Управление ролями
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Модальное окно -->
+<div id="rolesModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Данные подгружаются динамически -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Открытие модального окна для управления ролями
+            $(document).on('click', '.manage-roles-btn', function () {
+                const url = $(this).data('url');
+                const title = $(this).data('title');
+
+                $.get(url, function (data) {
+                    $('#rolesModal .modal-body').html(data);
+                    $('#rolesModal .modal-title').text(title);
+                    $('#rolesModal').modal('show');
+                }).fail(function () {
+                    alert('Ошибка при загрузке данных.');
+                });
+            });
+
+            // Обработка формы через AJAX
+            $(document).on('submit', '#manageRolesForm', function (e) {
+                e.preventDefault();
+                const form = $(this);
+                const url = form.attr('action');
+                const data = form.serialize();
+
+                $.post(url, data, function (response) {
+                    if (response.success) {
+                        $('#rolesModal').modal('hide');
+                        location.reload(); // Обновление страницы
+                    } else {
+                        alert('Ошибка при сохранении данных.');
+                    }
+                }).fail(function () {
+                    alert('Ошибка при выполнении запроса.');
+                });
+            });
+        });
+    </script>
+}

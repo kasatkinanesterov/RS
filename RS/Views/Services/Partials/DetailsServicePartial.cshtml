@@ -1,0 +1,32 @@
+﻿@model RS.ViewModels.Services.ServiceViewModel
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Название</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+
+        <dt class="col-sm-2">Цена</dt>
+        <dd class="col-sm-10">@Model.Price.ToString("C")</dd>
+
+        <dt class="col-sm-2">Описание</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+
+        <dt class="col-sm-2">Роль</dt>
+        <dd class="col-sm-10">@Model.RoleName</dd>
+
+        <dt class="col-sm-2">Активна</dt>
+        <dd class="col-sm-10">@Model.IsActive</dd>
+
+        <dt class="col-sm-2">Фото</dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.Photo))
+            {
+                <img src="@Model.Photo" alt="@Model.Name" style="max-width: 100%;" />
+            }
+            else
+            {
+                <p>Фото не добавлено</p>
+            }
+        </dd>
+    </dl>
+</div>

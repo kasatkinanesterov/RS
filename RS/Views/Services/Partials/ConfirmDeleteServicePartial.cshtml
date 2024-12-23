@@ -1,0 +1,23 @@
+﻿@model RS.ViewModels.Services.ServiceViewModel
+
+<div>
+  
+    <p>Вы уверены, что хотите удалить услугу "<strong>@Model.Name</strong>"?</p>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Цена</dt>
+        <dd class="col-sm-10">@Model.Price.ToString("C")</dd>
+
+        <dt class="col-sm-2">Роль</dt>
+        <dd class="col-sm-10">@Model.RoleName</dd>
+
+        <dt class="col-sm-2">Описание</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+    </form>
+</div>

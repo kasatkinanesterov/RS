@@ -1,0 +1,24 @@
+﻿@model RS.ViewModels.Orders.AgentEditOrderViewModel
+
+<form id="editOrderByAgentForm" method="post" asp-action="EditOrderByAgent">
+    <h6>Редактировать заказ</h6>
+    <input asp-for="Id" type="hidden" />
+    <div>
+        <label>Имя клиента</label>
+        <input asp-for="CustomerName" class="form-control" />
+    </div>
+    <div>
+        <label>Email клиента</label>
+        <input asp-for="CustomerEmail" class="form-control" />
+    </div>
+    <div>
+        <label>Телефон клиента</label>
+        <input asp-for="CustomerPhone" class="form-control" />
+    </div>
+    <div>
+        <label for="OrderStatus">Статус заказа</label>
+        <select asp-for="OrderStatus" class="form-control" asp-items="@(new SelectList(RS.ViewModels.Orders.AgentEditOrderViewModel.AvailableStatuses))"></select>
+        <span asp-validation-for="OrderStatus" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>

@@ -1,0 +1,51 @@
+﻿@model RS.ViewModels.Products.ProductViewModel
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="Name">Название</label>
+        <input type="text" asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Цена</label>
+        <input type="number" asp-for="Price" class="form-control" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Описание</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Photo">Фото</label>
+        <input type="file" id="PhotoInput" class="form-control" name="photoFile" />
+        <img id="PreviewImage" src="#" alt="Предпросмотр" style="display:none; max-width: 100%; margin-top: 10px;" />
+    </div>
+
+    <div class="form-group">
+        <label for="RoleId">Роль</label>
+        <select asp-for="RoleId" class="form-control" asp-items="ViewBag.Roles"></select>
+        <span asp-validation-for="RoleId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Создать</button>
+    </div>
+</form>
+
+<script>
+    (function ($) {
+        $("#PhotoInput").change(function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#PreviewImage").attr("src", e.target.result).show();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    })(jQuery);
+</script>
